@@ -1,4 +1,7 @@
 #include "nlc_app.h"
+#include "llc_path.h"
+#include "llc_label.h"
+#include "llc_file.h"
 
 #ifdef LLC_ESP8266
 #	include <user_interface.h>
