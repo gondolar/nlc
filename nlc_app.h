@@ -1,4 +1,5 @@
 #include "nlc_wifi.h"
+#include "nlc_http.h"
 
 #include "llc_frameinfo.h"
 #include "llc_micro.h"
@@ -40,15 +41,17 @@ namespace llc
 		SAppFolders				Folders			= {};
 		SAppFilenames			Filenames		= {};
 		SAppExtensions			Extensions		= {};
+		SHTTPEventServer		EventServer		= {};
 
 		SBusManager<SI2CDevice>	I2CManager		= {};
 		SBusManager<SSPIDevice>	SPIManager		= {};
 
-		::llc::SWiFi			WiFi			= {};
+		SWiFi					WiFi			= {};
 		stxp	uint32_t		TickWiFi		= 10;
 		float					TimeWiFi		= 0;
     };
     ::llc::err_t	evalResetCause		(SNLCApp & appInstance, ::llc::ESP_RESET & resetCause, ::llc::ESP_AWAKE & awakeCause, uint64_t & wakeupPins);
-}
+	::llc::err_t	setupNetwork		(SNLCApp & app, llc::vcs filenameWiFi, llc::vcs filenameHTTP, llc::vcs pathConfig);
+} // namespace
 
 #endif // NLC_APP_H

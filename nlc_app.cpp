@@ -12,12 +12,12 @@
 
 
 #ifndef LLC_ESP8266
-	RTC_DATA_ATTR	int		bootCount       = 0;
+RTC_DATA_ATTR	int		bootCount       = 0;
 #else // LLC_ESP8266
-static int 	RTC_BOOTCOUNT_ADDR 	= 64;  // Just pick an offset; 64 is safe
-static int 	bootCount 			= 0;
-static void loadBootCount	()	{ system_rtc_mem_read(RTC_BOOTCOUNT_ADDR, &bootCount, sizeof(bootCount)); }
-static void saveBootCount	()	{ system_rtc_mem_write(RTC_BOOTCOUNT_ADDR, &bootCount, sizeof(bootCount)); }
+sttc	int		RTC_BOOTCOUNT_ADDR 	= 64;  // Just pick an offset; 64 is safe
+sttc	int		bootCount 			= 0;
+sttc	void	loadBootCount	()	{ system_rtc_mem_read(RTC_BOOTCOUNT_ADDR, &bootCount, sizeof(bootCount)); }
+sttc	void	saveBootCount	()	{ system_rtc_mem_write(RTC_BOOTCOUNT_ADDR, &bootCount, sizeof(bootCount)); }
 #endif // LLC_ESP8266
 
 HardwareSerial	& LLCLogStream	= Serial;
@@ -74,4 +74,44 @@ sttc	::llc::err_t	serial_print	(const char * text)						{ return LLCLogStream.pr
 	bool			fs_mounted;
 	if_zero_e((fs_mounted = LittleFS.begin()));
 	return bootCount; // Increment boot number on every reboot
+}
+
+
+::llc::err_t	llc::setupNetwork		(llc::SNLCApp & app, llc::vcs filenameWiFi, llc::vcs filenameHTTP, llc::vcs pathConfig) {
+ 	LLC_PLATFORM_CRT_CHECK_MEMORY();
+	::llc::WiFiClass 			& wifiDevice 		= app.WiFi.WiFi;
+	::llc::SWiFiState 			& wifiState 		= app.WiFi.Setup;
+	::llc::SHTTPEventServer 	& eventServer 		= app.EventServer;
+	::llc::error_t				error				= 0;
+	const int64_t				timeZone			= -180;
+	const ::llc::vcs			addressOfNTP		= {};
+	{
+		info_printf("Initializing '%s'.", "WiFi");
+		llc::asc_t 	filepath;// = app.Folders.Partition_Base;
+		llc::pathNameCompose(pathConfig, filenameWiFi, filepath);
+		llc::append_strings(filepath, '.', app.Extensions.Setup);
+		filenameWiFi = llc::label({filepath});
+		::llc::au0_t	configWiFi;
+		es_if_failed(::llc::fileToMemory(filenameWiFi, configWiFi));
+		info_printf("WiFi configuration filename: \"%s\".", filenameWiFi.begin());
+		info_printf("Current configuration:\n\"%s\".", configWiFi.begin());
+		es_if_failed(error = ::llc::wifiSetup(wifiDevice, wifiState, configWiFi.size() ? configWiFi.cc() : ::llc::vcsc_t{::llc::WIFI_CONFIG}));
+	}
+	if(false == (wifiState.Mode.DisableSAP && wifiState.Mode.DisableSTA)) {
+		configTime(timeZone * 60, 0, addressOfNTP, "south-america.pool.ntp.org");
+
+		info_printf("Initializing '%s'.", "HTTP Event Server");
+		llc::asc_t 	filepath;// = app.Folders.Partition_Base;
+		llc::pathNameCompose(pathConfig, filenameHTTP, filepath);
+		llc::append_strings(filepath, '.', app.Extensions.Setup);
+		filenameHTTP = llc::label({filepath});
+		info_printf("'%s'", filenameHTTP.begin());
+		::llc::au0_t	configHTTP;
+		es_if_failed(::llc::fileToMemory(filenameHTTP, configHTTP));
+		rees_if_failed(eventServer.Initialize(configHTTP.size() ? configHTTP.cc() : ::llc::vcsc_t{::llc::HTTP_CONFIG}));
+
+	}
+	////ArduinoOTA.begin();
+	LLC_PLATFORM_CRT_CHECK_MEMORY();
+	return 0;
 }

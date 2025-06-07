@@ -16,8 +16,6 @@
 #	include <WiFiGeneric.h>
 #endif // LLC_ESP8266
 // 20291938664
-// l4c0nch4tuy44F1P!
-// l4conch4tuy44F1P!
 
 ::llc::err_t		llc::wifiAddressLoad 	(const ::llc::SJSONReader & cfgDoc, int32_t iAddress, ::llc::SWiFiAddress & address) {
 	LLC_PLATFORM_CRT_CHECK_MEMORY();
