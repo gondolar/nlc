@@ -81,9 +81,9 @@ sttc	::llc::err_t	serial_print	(const char * text)						{ return LLCLogStream.pr
 
 	bool			spiffs_mounted;
 #ifdef LLC_ESP32
-  es_if(false == (spiffs_mounted = SPIFFS.begin(false, g_App.PartitionBase)));
+	es_if(false == (spiffs_mounted = SPIFFS.begin(false, appInstance.PartitionBase)));
 #else //!LLC_ESP32
-  if_zero_e(spiffs_mounted = LittleFS.begin());
+	if_zero_e(spiffs_mounted = LittleFS.begin());
 #endif // LLC_ESP32
 	//if(false == spiffs_mounted)
 	//	spiffs_mounted = spiffsBegin(false);
