@@ -11,7 +11,12 @@
 #endif
 
 #include <cmath>
-#include <LittleFS.h>
+#ifdef LLC_ESP32
+#   include <SPIFFS.h>
+#else
+#   include <LittleFS.h>
+#endif //LLC_ESP32
+
 
 
 #ifndef LLC_ESP8266
@@ -74,8 +79,17 @@ sttc	::llc::err_t	serial_print	(const char * text)						{ return LLCLogStream.pr
 	}
 #endif // LLC_ESP8266
 
-	bool			fs_mounted;
-	if_zero_e((fs_mounted = LittleFS.begin()));
+	bool			spiffs_mounted;
+#ifdef LLC_ESP32
+  es_if(false == (spiffs_mounted = SPIFFS.begin(false, g_App.PartitionBase)));
+#else //!LLC_ESP32
+  if_zero_e(spiffs_mounted = LittleFS.begin());
+#endif // LLC_ESP32
+	//if(false == spiffs_mounted)
+	//	spiffs_mounted = spiffsBegin(false);
+	//if(g_App.BootInfo.ResetCause == llc::ESP_RESET_BROWNOUT)
+	//	esp_wifi_set_mode(WIFI_MODE_NULL);
+	//else
 	return bootCount; // Increment boot number on every reboot
 }
 
