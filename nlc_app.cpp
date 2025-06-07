@@ -2,6 +2,7 @@
 #include "llc_path.h"
 #include "llc_label.h"
 #include "llc_file.h"
+#include "llc_string.h"
 
 #ifdef LLC_ESP8266
 #	include <user_interface.h>
@@ -108,7 +109,7 @@ sttc	::llc::err_t	serial_print	(const char * text)						{ return LLCLogStream.pr
 		llc::pathNameCompose(pathConfig, filenameWiFi, filepath);
 		llc::append_strings(filepath, '.', app.Extensions.Setup);
 		filenameWiFi = llc::label({filepath});
-		::llc::au0_t	configWiFi;
+		::llc::string	configWiFi;
 		es_if_failed(::llc::fileToMemory(filenameWiFi, configWiFi));
 		info_printf("WiFi configuration filename: \"%s\".", filenameWiFi.begin());
 		info_printf("Current configuration:\n\"%s\".", configWiFi.begin());
@@ -123,7 +124,7 @@ sttc	::llc::err_t	serial_print	(const char * text)						{ return LLCLogStream.pr
 		llc::append_strings(filepath, '.', app.Extensions.Setup);
 		filenameHTTP = llc::label({filepath});
 		info_printf("'%s'", filenameHTTP.begin());
-		::llc::au0_t	configHTTP;
+		::llc::string	configHTTP;
 		es_if_failed(::llc::fileToMemory(filenameHTTP, configHTTP));
 		rees_if_failed(eventServer.Initialize(configHTTP.size() ? configHTTP.cc() : ::llc::vcsc_t{::llc::HTTP_CONFIG}));
 
