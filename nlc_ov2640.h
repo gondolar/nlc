@@ -1,4 +1,4 @@
-#include "llc_typeint.h"
+#include "llc_error.h"
 
 #ifndef NLC_OV2640_H
 #define NLC_OV2640_H
