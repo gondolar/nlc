@@ -4,10 +4,13 @@
 
 #include "llc_json.h"
 
+#include <ESPAsyncWebServer.h>
+
 #ifdef LLC_ESP32
 
-#include <ESPAsyncWebServer.h>
-#include <Udp.h>
+#	include <Udp.h>
+
+#endif // LLC_ESP32
 
 #ifndef MLC_HTTP_H
 #define MLC_HTTP_H
@@ -57,5 +60,3 @@ namespace llc
 } // namespace
 
 #endif // MLC_HTTP_H
-
-#endif // LLC_ESP32
